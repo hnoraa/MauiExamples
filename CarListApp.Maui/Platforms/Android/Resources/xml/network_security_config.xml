@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<network-security-config>
+	<!-- cleartextTrafficPermitted allows you to access domains that aren't ssl secured (good for local dev) -->
+	<domain-config cleartextTrafficPermitted="true">
+		<domain includeSubdomains="true">10.0.2.2</domain> <!-- Android loopback IP (localhost on Android) can do cleartextTrafficPermitted -->
+		<domain includeSubdomains="true">localhost</domain> <!-- localhost can do cleartextTrafficPermitted -->
+		<domain includeSubdomains="true">192.168.0.1</domain>  <!-- ipaddress of router (would want dev machines IP) can do cleartextTrafficPermitted -->
+		<trust-anchors>
+			<certificates src="system" />
+		</trust-anchors>
+	</domain-config>
+</network-security-config>

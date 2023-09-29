@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CarListApp.Maui.Views.CarDetailsPage"
+             xmlns:vm="clr-namespace:CarListApp.Maui.ViewModels"
+             x:DataType="vm:CarDetailsViewModel"
+             Title="{Binding Car.Display}">
+    <VerticalStackLayout>
+        <Label Text="{Binding Car.Make}"
+               VerticalOptions="Center"
+               HorizontalOptions="Center"
+               FontSize="Medium" />
+        <Label Text="{Binding Car.Model}"
+               VerticalOptions="Center"
+               HorizontalOptions="Center"
+               FontSize="Medium" />
+        <Label Text="{Binding Car.Vin}"
+               VerticalOptions="Center"
+               HorizontalOptions="Center"
+               FontSize="Medium" />
+    </VerticalStackLayout>
+</ContentPage>
