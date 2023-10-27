@@ -4,7 +4,7 @@ namespace CarListApp.Maui.Views;
 
 public partial class LoginPage : ContentPage
 {
-	public LoginPage(LoginPageViewModel viewModel)
+	public LoginPage(LoginViewModel viewModel)
 	{
 		InitializeComponent();
 		this.BindingContext = viewModel;

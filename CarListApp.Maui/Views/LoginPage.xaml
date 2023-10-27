@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CarListApp.Maui.Views.LoginPage"
              xmlns:viewmodel="clr-namespace:CarListApp.Maui.ViewModels"
-             x:DataType="viewmodel:LoginPageViewModel"
+             x:DataType="viewmodel:LoginViewModel"
              Shell.NavBarIsVisible="False"
              Title="Login">
     <VerticalStackLayout

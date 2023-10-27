@@ -154,7 +154,8 @@ app.MapPost("/login", async (LoginDto loginDto, UserManager<IdentityUser> userMa
     {
         new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub, user.Id),
         new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),  // this is to prevent replay attacks, give a new token each time for the claims
-        new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Email, user.Email),
+        //new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Email, user.Email), // this causes some instances where the username doesnt display
+        new Claim(ClaimTypes.Email, user.Email),
         new Claim("CustomClaim", user.EmailConfirmed.ToString()),   // this is a custom claim, you can add anything to claims
     }
     .Union(claims)    // union the claims from above
