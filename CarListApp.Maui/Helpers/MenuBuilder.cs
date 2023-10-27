@@ -1,4 +1,5 @@
 ﻿using CarListApp.Maui.Controls;
+using CarListApp.Maui.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,6 +81,27 @@ namespace CarListApp.Maui.Helpers
                 {
                     Shell.Current.Items.Add(flyoutItem);
                 }
+            }
+
+            var logoutFlyoutItem = new FlyoutItem()
+            {
+                Title = "Logout",
+                Route = nameof(LogoutPage),
+                FlyoutDisplayOptions = FlyoutDisplayOptions.AsSingleItem,
+                Items =
+                    {
+                        new ShellContent
+                        {
+                            Icon = "dotnet_bot.svg",
+                            Title = "Logout",
+                            ContentTemplate = new DataTemplate(typeof(LogoutPage))
+                        }
+                    }
+            };
+
+            if (!Shell.Current.Items.Contains(logoutFlyoutItem))
+            {
+                Shell.Current.Items.Add(logoutFlyoutItem);
             }
         }
     }
