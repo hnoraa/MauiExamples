@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace CarListApp.Api
+﻿namespace CarListApp.Api.DataAccess
 {
     public class Car
     {

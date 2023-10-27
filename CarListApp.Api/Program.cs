@@ -1,12 +1,13 @@
-using CarListApp.Api;
+using CarListApp.Api.DataAccess;
+using CarListApp.Api.Dto;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Runtime.CompilerServices;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -141,11 +142,39 @@ app.MapPost("/login", async (LoginDto loginDto, UserManager<IdentityUser> userMa
     }
 
     // generate token...
+    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]));
+    var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+    
+    // get roles and claims
+    var roles = await userManager.GetRolesAsync(user);
+    var claims = await userManager.GetClaimsAsync(user);
+
+    // add claims for the token, these get added to the jwt token, aka comprise the token
+    var tokenClaims = new List<Claim>
+    {
+        new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub, user.Id),
+        new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),  // this is to prevent replay attacks, give a new token each time for the claims
+        new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Email, user.Email),
+        new Claim("CustomClaim", user.EmailConfirmed.ToString()),   // this is a custom claim, you can add anything to claims
+    }
+    .Union(claims)    // union the claims from above
+    .Union(roles.Select(role => new Claim(ClaimTypes.Role, role)));   // union the roles to this list as well
+
+    // get the token and create a string - this creates the security key
+    var securityToken = new JwtSecurityToken(
+        issuer: builder.Configuration["JwtSettings:Issuer"],
+        audience: builder.Configuration["JwtSettings:Audience"],
+        claims: tokenClaims,
+        expires: DateTime.UtcNow.AddMinutes(Convert.ToInt32(builder.Configuration["JwtSettings:DurationInMinutes"])),
+        signingCredentials: credentials
+    );
+    var accessToken = new JwtSecurityTokenHandler().WriteToken(securityToken);
+
     var response = new AuthResponseDto()
     {
         Username = user.UserName,
         UserId = user.Id,
-        AccessToken = "AccessToken"
+        AccessToken = accessToken
     };
 
     return Results.Ok(response);
@@ -153,19 +182,3 @@ app.MapPost("/login", async (LoginDto loginDto, UserManager<IdentityUser> userMa
 
 // execute
 app.Run();
-
-public class LoginDto
-{
-    public string Username { get; set; }
-
-    public string Password { get; set; }
-}
-
-public class AuthResponseDto
-{
-    public string Username { get; set; }
-    
-    public string UserId { get; set; }
-
-    public string AccessToken { get; set; }
-}

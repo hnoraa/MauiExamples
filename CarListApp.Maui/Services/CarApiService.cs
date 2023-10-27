@@ -1,4 +1,5 @@
 ﻿using CarListApp.Maui.Models;
+using CarListApp.Maui.ViewModels;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,7 @@ namespace CarListApp.Maui.Services
         {
             try
             {
+                await SetAuthToken();
                 var response = await _httpClient.GetStringAsync("/api/cars");
                 //response.EnsureSuccessStatusCode();
 
@@ -47,6 +49,7 @@ namespace CarListApp.Maui.Services
         {
             try
             {
+                await SetAuthToken();
                 var response = await _httpClient.GetStringAsync($"/api/cars/{id}");
                 //response.EnsureSuccessStatusCode();
 
@@ -65,6 +68,7 @@ namespace CarListApp.Maui.Services
         {
             try
             {
+                await SetAuthToken();
                 var response = await _httpClient.PostAsJsonAsync("/api/cars", car);
                 response.EnsureSuccessStatusCode();
                 StatusMessage = "Insert successful";
@@ -79,6 +83,7 @@ namespace CarListApp.Maui.Services
         {
             try
             {
+                await SetAuthToken();
                 var response = await _httpClient.PutAsJsonAsync($"/api/cars/{id}", car);
                 response.EnsureSuccessStatusCode();
                 StatusMessage = "Update successful";
@@ -93,6 +98,7 @@ namespace CarListApp.Maui.Services
         {
             try
             {
+                await SetAuthToken();
                 var response = await _httpClient.DeleteAsync($"/api/cars/{id}");
                 response.EnsureSuccessStatusCode();
                 StatusMessage = "Update successful";
@@ -103,6 +109,33 @@ namespace CarListApp.Maui.Services
                 StatusMessage = "Failed to delete car";
                 return false;
             }
+        }
+
+        public async Task<AuthResponseModel> Login(LoginModel loginModel)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("/login", loginModel);
+                response.EnsureSuccessStatusCode();
+                StatusMessage = "Login successful";
+
+                var data = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<AuthResponseModel>(data);
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = "Failed to login successfully";
+                return default;
+            }
+        }
+
+        public async Task SetAuthToken()
+        {
+            // this will add the token to all of the endpoints (other than login) because they require tokens
+            var token = await SecureStorage.GetAsync("Token");
+
+            // add a header with the word Bearer and the token to our http client
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
         }
     }
 }

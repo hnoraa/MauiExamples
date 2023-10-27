@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.EntityFrameworkCore;
 
-namespace CarListApp.Api
+namespace CarListApp.Api.DataAccess
 {
     public class CarListDbContext : IdentityDbContext
     {

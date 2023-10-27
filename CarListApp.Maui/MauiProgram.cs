@@ -1,7 +1,6 @@
 ﻿using CarListApp.Maui.Services;
 using CarListApp.Maui.ViewModels;
 using CarListApp.Maui.Views;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace CarListApp.Maui;
 
