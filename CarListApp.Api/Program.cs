@@ -25,7 +25,8 @@ builder.Services.AddCors(o => {
 
 // this should be outside of the GetCurrentDirectory() folder when we publish, just in case there are permission issues
 //var dbPath = Path.Join(Directory.GetCurrentDirectory(), "carList.db");
-var dbPath = "C:\\ForAppTesting\\carlist.db";
+//var dbPath = "C:\\ForAppTesting\\carlist.db"; // local testing
+var dbPath = "carlist.db";  // this will go to the root folder
 var connection = new SqliteConnection($"DataSource={dbPath}");
 builder.Services.AddDbContext<CarListDbContext>(o => o.UseSqlite(connection));
 
@@ -71,8 +72,13 @@ app.UseCors("AllowAll");
 //    app.UseSwaggerUI();
 //}
 
-// OpenAPI stuff
-app.UseSwagger();
+// automate the database migration
+using (var scope = app.Services.CreateScope())
+using (var context = scope.ServiceProvider.GetService<CarListDbContext>())
+    context.Database.Migrate();
+
+    // OpenAPI stuff
+    app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
